@@ -1,4 +1,3 @@
-```python
 from telethon import TelegramClient, events
 import requests
 import os
@@ -14,20 +13,21 @@ client = TelegramClient("session", api_id, api_hash)
 @client.on(events.NewMessage(chats=source_channel))
 async def handler(event):
 
-    message_text = event.raw_text if event.raw_text else ""
-
-    data = {
-        "text": message_text
-    }
-
     try:
-        requests.post(webhook_url, json=data)
-        print("Message sent to n8n")
+        payload = {
+            "text": event.raw_text,
+            "date": str(event.date),
+            "sender": str(event.sender_id)
+        }
+
+        requests.post(webhook_url, json=payload)
+
+        print("Sent to n8n")
+
     except Exception as e:
         print("Error:", e)
 
-print("Bot Started...")
+print("Bot running...")
 
 client.start()
 client.run_until_disconnected()
-```
